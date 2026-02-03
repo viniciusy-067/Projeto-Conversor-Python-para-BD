@@ -5,18 +5,6 @@ import uuid
 import csv
 import re
 
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-if __name__ == "__main__":
-    app.run()
-
-
 app = Flask(__name__)
 
 UPLOAD_DIR = "uploads"
@@ -27,14 +15,17 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 ALLOWED_EXT = {".csv", ".xls", ".xlsx"}
 
+
 def clean_name(value: str) -> str:
     return re.sub(r"\s+", " ", value.replace('"', "")).strip()
+
 
 def clean_number(value: str) -> str:
     digits = re.sub(r"\D", "", value)
     return digits if len(digits) >= 8 else ""
 
-def parse_weird_excel(path):
+
+def parse_weird_excel(path: str) -> pd.DataFrame:
     raw = pd.read_excel(path, header=None)
     lines = raw.iloc[:, 0].dropna().astype(str).tolist()
 
@@ -58,6 +49,7 @@ def parse_weird_excel(path):
             output.append({"Name": name, "Number": number})
 
     return pd.DataFrame(output, columns=["Name", "Number"])
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -85,11 +77,16 @@ def index():
             df["Number"] = df["Number"].astype(str).map(clean_number)
             df = df[(df["Name"] != "") & (df["Number"] != "")]
 
-        df.to_csv(output_path, index=False, quoting=1)
+        df.to_csv(output_path, index=False, quoting=csv.QUOTE_MINIMAL)
 
-        return send_file(output_path, as_attachment=True, download_name="contatos.csv")
+        return send_file(
+            output_path,
+            as_attachment=True,
+            download_name="contatos.csv",
+        )
 
     return render_template("index.html")
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
