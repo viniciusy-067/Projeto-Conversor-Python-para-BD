@@ -16,7 +16,7 @@ Aplicação web focada em **padronização e conversão de listas de contatos**.
 [![Deploy on Render](https://img.shields.io/badge/Live_Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://projeto-conversor-python-para-bd.onrender.com)
 
 </div>
----
+
 
 Nota: Como o projeto está hospedado no plano gratuito do Render, o primeiro carregamento pode levar cerca de 50 segundos para iniciar o servidor.
 
