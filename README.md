@@ -17,7 +17,7 @@ Aplicação web focada em **padronização e conversão de listas de contatos**.
 
 </div>
 "Nota: Como o projeto está hospedado no plano gratuito do Render, o primeiro carregamento pode levar cerca de 50 segundos para iniciar o servidor."
----
+
 
 ## 📖 Visão Geral
 
