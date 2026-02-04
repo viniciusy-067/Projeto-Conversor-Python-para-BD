@@ -1,92 +1,102 @@
 from flask import Flask, render_template, request, send_file
 import pandas as pd
-import os
-import uuid
-import csv
 import re
+import os
+import tempfile
 
 app = Flask(__name__)
-
-UPLOAD_DIR = "uploads"
-OUTPUT_DIR = "outputs"
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 
 ALLOWED_EXT = {".csv", ".xls", ".xlsx"}
 
 
-def clean_name(value: str) -> str:
-    return re.sub(r"\s+", " ", value.replace('"', "")).strip()
+def clean_name(v):
+    if pd.isna(v):
+        return ""
+    return re.sub(r"\s+", " ", str(v)).strip()
 
 
-def clean_number(value: str) -> str:
-    digits = re.sub(r"\D", "", value)
+def clean_number(v):
+    if pd.isna(v):
+        return ""
+    s = str(v).replace(",", ".")
+    try:
+        if "e" in s.lower():
+            s = str(int(float(s)))
+    except Exception:
+        pass
+    digits = re.sub(r"\D", "", s)
     return digits if len(digits) >= 8 else ""
 
 
-def parse_weird_excel(path: str) -> pd.DataFrame:
-    raw = pd.read_excel(path, header=None)
-    lines = raw.iloc[:, 0].dropna().astype(str).tolist()
+def read_csv_rows(path):
+    for chunk in pd.read_csv(
+        path,
+        chunksize=100_000,
+        sep=None,
+        engine="python",
+        on_bad_lines="skip",
+    ):
+        name_col = chunk.columns[0]
+        num_col = chunk.columns[1]
 
-    rows = list(csv.reader(lines))
-    header = rows[0]
-    data = rows[1:]
+        for _, r in chunk.iterrows():
+            nome = clean_name(r[name_col])
+            numero = clean_number(r[num_col])
+            if nome and numero:
+                yield nome, numero
 
-    name_idx = header.index("nome")
-    phone_idx = header.index("celular_principal")
 
-    output = []
+def read_excel_rows(path):
+    df = pd.read_excel(path)
+    name_col = df.columns[0]
+    num_col = df.columns[1]
 
-    for r in data:
-        if len(r) <= max(name_idx, phone_idx):
-            continue
-
-        name = clean_name(r[name_idx])
-        number = clean_number(r[phone_idx])
-
-        if name and number:
-            output.append({"Name": name, "Number": number})
-
-    return pd.DataFrame(output, columns=["Name", "Number"])
+    for _, r in df.iterrows():
+        nome = clean_name(r[name_col])
+        numero = clean_number(r[num_col])
+        if nome and numero:
+            yield nome, numero
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         file = request.files.get("file")
-        if not file:
-            return "Arquivo não enviado", 400
+        if not file or file.filename == "":
+            return "Arquivo inválido", 400
 
         ext = os.path.splitext(file.filename)[1].lower()
         if ext not in ALLOWED_EXT:
             return "Formato não suportado", 400
 
-        input_path = os.path.join(UPLOAD_DIR, f"{uuid.uuid4()}{ext}")
-        output_path = os.path.join(OUTPUT_DIR, f"{uuid.uuid4()}.csv")
+        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
+            file.save(tmp.name)
+            input_path = tmp.name
 
-        file.save(input_path)
+        rows = (
+            read_csv_rows(input_path)
+            if ext == ".csv"
+            else read_excel_rows(input_path)
+        )
 
-        if ext in {".xls", ".xlsx"}:
-            df = parse_weird_excel(input_path)
-        else:
-            df = pd.read_csv(input_path)
-            df = df.iloc[:, :2]
-            df.columns = ["Name", "Number"]
-            df["Name"] = df["Name"].astype(str).map(clean_name)
-            df["Number"] = df["Number"].astype(str).map(clean_number)
-            df = df[(df["Name"] != "") & (df["Number"] != "")]
+        # 🔹 DataFrame FINAL no padrão do chatbot
+        df_out = pd.DataFrame(rows, columns=["nome", "numero"])
+        df_out["e-mail"] = ""
 
-        df.to_csv(output_path, index=False, quoting=csv.QUOTE_MINIMAL)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as out:
+            output_path = out.name
+
+        df_out.to_excel(output_path, index=False)
 
         return send_file(
             output_path,
             as_attachment=True,
-            download_name="contatos.csv",
+            download_name="contatos.xlsx",
         )
 
     return render_template("index.html")
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

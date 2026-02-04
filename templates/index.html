@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Conversor de Contatos | Premium</title>
+    <title>Conversor de Contatos</title>
 
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1157/1157109.png" type="image/png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .glass {
@@ -24,57 +24,82 @@
 
 <body class="min-h-screen bg-[#020617] text-slate-200 flex items-center justify-center p-4">
 
+    <!-- background blur -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden -z-10">
         <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-900/20 blur-[120px]"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/20 blur-[120px]"></div>
     </div>
 
     <main class="w-full max-w-lg glass rounded-2xl shadow-2xl p-8 md:p-10">
-        
+
+        <!-- Header -->
         <header class="mb-10 text-center">
             <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-4">
-                Fast & Secure
+                Conversão segura de dados
             </div>
+
             <h1 class="text-3xl font-bold tracking-tight text-white mb-3">
                 Conversor de Contatos
             </h1>
+
             <p class="text-slate-400 text-sm leading-relaxed">
-                Transforme seus arquivos complexos em um CSV <br class="hidden sm:block"> limpo e organizado instantaneamente.
+                Converta arquivos CSV ou Excel em um CSV limpo <br class="hidden sm:block">
+                contendo apenas nome e número.
             </p>
         </header>
 
-        <form method="POST" enctype="multipart/form-data" class="space-y-8">
+        <!-- Form -->
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-8"
+            onsubmit="this.querySelector('button').innerText='Processando...';"
+        >
 
-            <div class="group">
+            <div>
                 <label for="file" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 ml-1">
-                    Upload do Arquivo
+                    Upload do arquivo
                 </label>
 
-                <div class="relative">
-                    <input
-                        id="file"
-                        name="file"
-                        type="file"
-                        required
-                        accept=".csv,.xls,.xlsx"
-                        class="block w-full text-sm text-slate-400
-                               file:mr-4 file:py-2.5 file:px-6
-                               file:rounded-xl file:border-0
-                               file:text-xs file:font-bold
-                               file:uppercase file:tracking-widest
-                               file:bg-indigo-600 file:text-white
-                               hover:file:bg-indigo-500
-                               file:transition-all file:cursor-pointer
-                               bg-slate-950/50 border border-slate-800 rounded-2xl
-                               focus:outline-none focus:border-indigo-500/50 transition-colors"
-                    />
-                </div>
+                <input
+                    id="file"
+                    name="file"
+                    type="file"
+                    required
+                    accept=".csv,.xls,.xlsx"
+                    title="Arquivos CSV, XLS ou XLSX até 50MB"
+                    class="block w-full text-sm text-slate-400
+                           file:mr-4 file:py-2.5 file:px-6
+                           file:rounded-xl file:border-0
+                           file:text-xs file:font-bold
+                           file:uppercase file:tracking-widest
+                           file:bg-indigo-600 file:text-white
+                           hover:file:bg-indigo-500
+                           file:transition-all file:cursor-pointer
+                           bg-slate-950/50 border border-slate-800 rounded-2xl
+                           focus:outline-none focus:border-indigo-500/50 transition-colors"
+                />
 
                 <div class="flex items-center justify-between mt-3 px-1">
-                    <p class="text-[11px] text-slate-500">Formatos: CSV, XLS, XLSX</p>
-                    <p class="text-[11px] text-slate-500 italic">Máx: 10MB</p>
+                    <p class="text-[11px] text-slate-500">Formatos aceitos: CSV, XLS, XLSX</p>
+                    <p class="text-[11px] text-slate-500 italic">Máx: 50MB</p>
                 </div>
             </div>
+            <div>
+  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+    Formato de exportação
+  </label>
+
+  <select
+    name="export_type"
+    required
+    class="w-full bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50"
+  >
+    <option value="csv">CSV ".CSV"</option>
+    <option value="xlsx">Excel ".XLSX"</option>
+  </select>
+</div>
+
 
             <button
                 type="submit"
@@ -86,15 +111,14 @@
             </button>
         </form>
 
-        <footer class="mt-10 border-t border-slate-800/50 pt-6">
-            <div class="flex items-center justify-center gap-4">
-                <div class="text-center">
-                    <span class="block text-[10px] uppercase tracking-[2px] text-slate-600 mb-1">Estrutura de Saída</span>
-                    <code class="text-xs bg-slate-950 px-3 py-1 rounded-md border border-slate-800 text-indigo-400">
-                        Name, Number
-                    </code>
-                </div>
-            </div>
+        <!-- Footer -->
+        <footer class="mt-10 border-t border-slate-800/50 pt-6 text-center">
+            <span class="block text-[10px] uppercase tracking-[2px] text-slate-600 mb-2">
+                Estrutura de saída
+            </span>
+            <code class="text-xs bg-slate-950 px-3 py-1 rounded-md border border-slate-800 text-indigo-400">
+                Name,Number
+            </code>
         </footer>
 
     </main>
