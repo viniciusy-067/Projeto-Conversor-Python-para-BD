@@ -1,112 +1,69 @@
-# Conversor de Contatos para CSV
+# ⚡ Conversor de Contatos para CSV
 
-Aplicação web open-source para **padronização e conversão de listas de contatos** em um arquivo CSV simples e consistente, contendo apenas as colunas **Nome** e **Telefone**.
-
-Desenvolvido em **Python (Flask)** com foco em automação, previsibilidade de saída e redução de erros de importação em sistemas de terceiros.
+Aplicação web focada em **padronização e conversão de listas de contatos**. Transforme arquivos complexos em um CSV limpo, consistente e pronto para importação.
 
 ---
 
-## Visão Geral
+<div align="center">
 
-Este projeto tem como objetivo facilitar a conversão de planilhas de contatos provenientes de diferentes fontes (CRMs, sistemas legados, exports manuais) em um formato CSV padronizado e limpo.
+![GitHub repo size](https://img.shields.io/github/repo-size/viniciusy-067/projeto-conversor-python-para-bd?style=for-the-badge&color=indigo)
+![GitHub language count](https://img.shields.io/github/languages/count/viniciusy-067/projeto-conversor-python-para-bd?style=for-the-badge&color=indigo)
+![MIT License](https://img.shields.io/badge/license-MIT-informational?style=for-the-badge)
 
-Ele é indicado para **uso local**, estudos e automações simples.
+<br />
 
----
+### 🔗 Acesse o Projeto Online
+[![Deploy on Render](https://img.shields.io/badge/Live_Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://projeto-conversor-python-para-bd.onrender.com)
 
-## Funcionalidades
-
-* Upload de arquivos via interface web
-* Suporte aos formatos:
-
-  * `.csv`
-  * `.xls`
-  * `.xlsx`
-* Normalização automática de dados:
-
-  * Capitalização adequada de nomes
-  * Remoção de espaços e caracteres especiais
-  * Telefones convertidos para apenas dígitos
-  * Descarte de colunas não utilizadas
+</div>
 
 ---
 
-## Exemplo de Normalização
+## 📖 Visão Geral
 
-| Campo    | Entrada               | Saída             |
-| -------- | --------------------- | ----------------- |
-| Nome     | `Joazinho`            | `Joazinho       ` |
-| Telefone | `+55 (67) 99999-8888` | `67999998888`     |
-| Outros   | `email@teste.com`     | *(descartado)*    |
+Desenvolvido com **Python (Flask)**, este projeto soluciona o problema comum de incompatibilidade entre planilhas de contatos (CRMs, sistemas legados) e ferramentas de automação que exigem um formato estrito de **Nome e Telefone**.
 
----
+> **Nota:** Ideal para desenvolvedores que buscam uma ferramenta rápida de sanitização de dados sem persistência em banco de dados.
 
-## Status do Projeto
+## 🛠️ Tecnologias e Ferramentas
 
-**Versão:** Pré-Alpha
+* **Backend:** Python 3.10+ (Flask)
+* **Frontend:** HTML5, Tailwind CSS (Modern UI)
+* **Processamento de Dados:** Pandas / Openpyxl
+* **Hospedagem:** Render (Cloud PaaS)
 
-Projeto funcional para cenários controlados, **não recomendado para produção**.
+## ✨ Funcionalidades
 
----
+* **Upload Inteligente:** Suporte para `.csv`, `.xls` e `.xlsx`.
+* **Normalização Automática:**
+    * Capitalização inteligente de nomes.
+    * Sanitização de strings (remoção de caracteres especiais).
+    * Extração de dígitos numéricos para telefones.
+    * Filtragem de colunas irrelevantes.
+* **Interface Minimalista:** Design responsivo e focado na experiência do usuário.
 
-## Requisitos
+## 📊 Exemplo de Processamento
 
-* Python 3.10+
-* Git
+| Campo    | Entrada (Suja)         | Saída (Sanitizada) |
+| :------- | :--------------------- | :----------------- |
+| **Nome** | `  viniCIUS taveira `  | `Vinicius Taveira` |
+| **Tel** | `+55 (67) 99999-8888`  | `67999998888`      |
+| **Meta** | `id: 001 / status: ok` | *(Descartado)* |
 
----
-
-## Instalação
+## 🚀 Instalação e Execução Local
 
 ```bash
-git clone https://github.com/viniciusy-067/nome-do-repositorio.git
-cd nome-do-repositorio
+# Clone o repositório
+git clone [https://github.com/viniciusy-067/projeto-conversor-python-para-bd.git](https://github.com/viniciusy-067/projeto-conversor-python-para-bd.git)
+
+# Entre na pasta
+cd projeto-conversor-python-para-bd
+
+# Configure o ambiente
 python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# venv\Scripts\activate   # Windows
 
-# Windows
-venv\\Scripts\\activate
-
-# Linux / macOS
-source venv/bin/activate
-
+# Instale dependências e rode
+pip install -r requirements.txt
 python app.py
-```
-
-Acesse: `http://localhost:5000`
-
----
-
-## Como Usar
-
-1. Abra a aplicação no navegador
-2. Faça upload do arquivo de contatos
-3. Aguarde o processamento
-4. O download do arquivo `contatos_padronizados.csv` será iniciado automaticamente
-
----
-
-## Segurança e Privacidade
-
-* Os arquivos são processados apenas durante a execução
-* Nenhum dado é persistido
-* Nenhuma informação é enviada para serviços externos
-
-Execute apenas em ambientes confiáveis.
-
----
-
-## Roadmap
-
-* [ ] Validação de telefones via Regex
-* [ ] Remoção de contatos duplicados
-* [ ] Mapeamento dinâmico de colunas
-* [ ] Testes automatizados (Pytest)
-* [ ] Docker
-
----
-
-## Licença
-
-MIT License
-
-Este projeto é distribuído "no estado em que se encontra", sem garantias.
